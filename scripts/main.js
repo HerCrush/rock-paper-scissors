@@ -1,3 +1,22 @@
+let playerScore = 0;
+let computerScore = 0;
+let i = 1;
+
+const scoreContainer = document.querySelector('#score_container');
+const container = document.querySelector('#container');
+
+const round = document.createElement('p');
+scoreContainer.appendChild(round);
+
+const results = document.createElement('p');
+container.appendChild(results);
+
+const gameOver = document.createElement('p');
+container.appendChild(gameOver);
+
+const score = document.createElement('p');
+container.appendChild(score);
+
 function computerPlay() {
     let random3 = Math.floor(Math.random()*3)+1;
     switch (random3){
@@ -11,7 +30,6 @@ function computerPlay() {
 }
 
 function playRound(playerSelection,computerSelection) {
-    playerSelection = playerSelection.toLowerCase();
     if(playerSelection==="rock" && computerSelection==="paper" 
     || playerSelection==="paper" && computerSelection==="scissors" 
     || playerSelection==="scissors" && computerSelection==="rock"){
@@ -25,45 +43,47 @@ function playRound(playerSelection,computerSelection) {
     }
 }
 
-function playerPlay(){
-    let ans=prompt('Choose rock,paper or scissors').toLowerCase();
-    while(ans!=='rock'&&ans!=='paper'&&ans!=='scissors'){
-        ans=prompt('Enter a valid answer sucko').toLowerCase();
+function game(player) {
+    gameOver.textContent = '';
+    round.textContent = `Round ${i}`;
+    console.log(`Round ${i}`);
+    let pc = computerPlay();
+    switch (playRound(player,pc)){
+        case 'win':
+            results.textContent = `You win! Computer chose ${pc}.`;
+            console.log(`You win! Computer chose ${pc}.`);
+            playerScore++;
+            break;
+        case 'lose':
+            results.textContent = `You lose! ${pc} beats ${player}`;
+            console.log(`You lose! ${pc} beats ${player}`);
+            computerScore++;
+            break;
+        case 'draw':
+            results.textContent = "It's a draw!";
+            console.log("It's a draw!");
+            break;
     }
-    return ans;
+    i++;
+    score.textContent = `Score: ${playerScore}:${computerScore}`
+    console.log(`Score: ${playerScore}:${computerScore}`);
+    switch (3){
+        case playerScore:
+            gameOver.textContent = "Congratulations! You won the game!";
+            console.log("Congratulations! You won the game!");
+            playerScore=0;
+            computerScore=0;
+            i=1;
+            return;
+        case computerScore:
+            gameOver.textContent = "Oh no... You lost the game.";
+            console.log("Oh no... You lost the game.");
+            playerScore=0;
+            computerScore=0;
+            i=1;
+            return;
+    }
 }
 
-function game() {
-    let playerScore = 0;
-    let computerScore = 0;
-    for(let i=1;i>0;i++){
-        console.log(`Round ${i}`);
-        let pc=computerPlay();
-        let player=playerPlay();
-        switch (playRound(player,pc)){
-            case 'win':
-                console.log(`You win! Computer chose ${pc}.`);
-                playerScore++;
-                break;
-            case 'lose':
-                console.log(`You lose! ${pc} beats ${player}`);
-                computerScore++;
-                break;
-            case 'draw':
-                console.log("It's a draw!");
-                break;
-        }
-        console.log(`Score: ${playerScore}:${computerScore}`);
-        switch (3){
-            case playerScore:
-                console.log("Congratulations! You won the game!");
-                return;
-            case computerScore:
-                console.log('Oh no... You lost the game.');
-                return;
-        }
-
-    }
-}
-
-game();
+const btns = document.querySelectorAll('.sel');
+btns.forEach( btn => btn.addEventListener('click', () => game(btn.id) ) );
